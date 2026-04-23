@@ -117,7 +117,7 @@ Password: admin
 
 **anupriya-rao**
 
-* GitHub: [https://github.com/lensen-degife](https://github.com/lensen-degife)
+* GitHub: [https://github.com/anupriya-rao](https://github.com/anupriya-rao)
 
 ---
 
