@@ -115,7 +115,7 @@ Password: admin
 
 ## 👨‍💻 Author
 
-**Lensen Degife**
+**anupriya-rao**
 
 * GitHub: [https://github.com/lensen-degife](https://github.com/lensen-degife)
 
