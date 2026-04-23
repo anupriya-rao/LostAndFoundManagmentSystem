@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Items - Lost and Found Management System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand">Lost & Found</a>
+            <ul class="navbar-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="lost-items.html">Lost Items</a></li>
+                <li><a href="found-items.html">Found Items</a></li>
+                <li><a href="report-lost.html">Report Lost</a></li>
+                <li><a href="report-found.html">Report Found</a></li>
+                <li><a href="claims.html">My Claims</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="dashboard">
+            <h2>Lost Items</h2>
+            
+            <div class="form-group">
+                <input type="text" id="searchInput" placeholder="Search by description or location...">
+            </div>
+            
+            <div class="table-container" id="itemsContainer">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/script.js"></script>
+    <script>
+        checkAuth();
+        
+        function loadLostItems() {
+            getItems('/items/lost').then(data => {
+                if (data && data.items) {
+                    renderItemsTable(data.items, 'itemsContainer');
+                }
+            });
+        }
+        
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+        
+        loadLostItems();
+    </script>
+</body>
+</html>

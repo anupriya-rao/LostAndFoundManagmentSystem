@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Lost Item - Lost and Found Management System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand">Lost & Found</a>
+            <ul class="navbar-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="lost-items.html">Lost Items</a></li>
+                <li><a href="found-items.html">Found Items</a></li>
+                <li><a href="report-lost.html">Report Lost</a></li>
+                <li><a href="report-found.html">Report Found</a></li>
+                <li><a href="claims.html">My Claims</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="dashboard" style="max-width: 600px;">
+            <h2>Report Lost Item</h2>
+            
+            <form id="reportForm">
+                <div class="form-group">
+                    <label for="description">Item Description:</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Jewelry">Jewelry</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Documents">Documents</option>
+                        <option value="Keys">Keys</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location Lost:</label>
+                    <input type="text" id="location" name="location" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dateLost">Date Lost:</label>
+                    <input type="date" id="dateLost" name="dateLost" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="color">Color:</label>
+                    <input type="text" id="color" name="color">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactInfo">Contact Information:</label>
+                    <input type="tel" id="contactInfo" name="contactInfo" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Report Item</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="../js/script.js"></script>
+    <script>
+        checkAuth();
+        
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const itemData = {
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                location: document.getElementById('location').value,
+                dateLost: document.getElementById('dateLost').value,
+                color: document.getElementById('color').value,
+                contactInfo: document.getElementById('contactInfo').value,
+                status: 'ACTIVE'
+            };
+            
+            createItem('/items/lost', itemData).then(data => {
+                if (data && data.success) {
+                    document.getElementById('reportForm').reset();
+                    setTimeout(() => {
+                        window.location.href = 'lost-items.html';
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

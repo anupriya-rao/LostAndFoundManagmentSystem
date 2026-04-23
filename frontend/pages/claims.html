@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Claims - Lost and Found Management System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand">Lost & Found</a>
+            <ul class="navbar-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="lost-items.html">Lost Items</a></li>
+                <li><a href="found-items.html">Found Items</a></li>
+                <li><a href="report-lost.html">Report Lost</a></li>
+                <li><a href="report-found.html">Report Found</a></li>
+                <li><a href="claims.html">My Claims</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="dashboard">
+            <h2>My Claims</h2>
+            <p>Manage your item claim requests</p>
+            
+            <div class="table-container" id="claimsContainer">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/script.js"></script>
+    <script>
+        checkAuth();
+        
+        function loadClaims() {
+            getItems('/claims/my-claims').then(data => {
+                if (data && data.claims) {
+                    renderClaimsTable(data.claims);
+                }
+            });
+        }
+        
+        function renderClaimsTable(claims) {
+            const container = document.getElementById('claimsContainer');
+            
+            if (!claims || claims.length === 0) {
+                container.innerHTML = '<p>No claims found</p>';
+                return;
+            }
+            
+            let html = '<table><thead><tr><th>Claim ID</th><th>Item</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+            
+            claims.forEach(claim => {
+                html += `
+                    <tr>
+                        <td>${claim.id}</td>
+                        <td>${claim.itemDescription}</td>
+                        <td><span class="badge badge-${claim.status.toLowerCase()}">${claim.status}</span></td>
+                        <td>${formatDate(claim.dateSubmitted)}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="viewClaim(${claim.id})">View</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+        
+        loadClaims();
+    </script>
+</body>
+</html>

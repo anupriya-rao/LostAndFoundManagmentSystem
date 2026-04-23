@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Lost and Found Management System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand">Lost & Found - Admin</a>
+            <ul class="navbar-menu">
+                <li><a href="admin-dashboard.html">Dashboard</a></li>
+                <li><a href="admin-users.html">Users</a></li>
+                <li><a href="admin-items.html">All Items</a></li>
+                <li><a href="admin-claims.html">Claims</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="dashboard">
+            <h2>Admin Dashboard</h2>
+            <p>System Overview</p>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h3 id="totalUsers">0</h3>
+                    <p>Total Users</p>
+                </div>
+                
+                <div class="card">
+                    <h3 id="totalItems">0</h3>
+                    <p>Total Items</p>
+                </div>
+                
+                <div class="card">
+                    <h3 id="totalClaims">0</h3>
+                    <p>Total Claims</p>
+                </div>
+                
+                <div class="card">
+                    <h3 id="activeItems">0</h3>
+                    <p>Active Items</p>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Recent Items</h3>
+            <div class="table-container" id="recentItemsContainer">
+                <p>Loading...</p>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Recent Claims</h3>
+            <div class="table-container" id="recentClaimsContainer">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/script.js"></script>
+    <script>
+        checkAuth();
+        
+        function loadAdminDashboard() {
+            getItems('/admin/stats').then(data => {
+                if (data && data.stats) {
+                    document.getElementById('totalUsers').textContent = data.stats.totalUsers || 0;
+                    document.getElementById('totalItems').textContent = data.stats.totalItems || 0;
+                    document.getElementById('totalClaims').textContent = data.stats.totalClaims || 0;
+                    document.getElementById('activeItems').textContent = data.stats.activeItems || 0;
+                }
+            });
+            
+            getItems('/admin/items/recent').then(data => {
+                if (data && data.items) {
+                    renderItemsTable(data.items, 'recentItemsContainer');
+                }
+            });
+            
+            getItems('/admin/claims/recent').then(data => {
+                if (data && data.claims) {
+                    renderClaimsTable(data.claims);
+                }
+            });
+        }
+        
+        function renderClaimsTable(claims) {
+            const container = document.getElementById('recentClaimsContainer');
+            
+            if (!claims || claims.length === 0) {
+                container.innerHTML = '<p>No claims found</p>';
+                return;
+            }
+            
+            let html = '<table><thead><tr><th>Claim ID</th><th>User</th><th>Item</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+            
+            claims.forEach(claim => {
+                html += `
+                    <tr>
+                        <td>${claim.id}</td>
+                        <td>${claim.userName}</td>
+                        <td>${claim.itemDescription}</td>
+                        <td><span class="badge badge-${claim.status.toLowerCase()}">${claim.status}</span></td>
+                        <td>${formatDate(claim.dateSubmitted)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+        
+        loadAdminDashboard();
+    </script>
+</body>
+</html>

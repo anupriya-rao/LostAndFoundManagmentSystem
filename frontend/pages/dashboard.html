@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Lost and Found Management System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand">Lost & Found</a>
+            <ul class="navbar-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="lost-items.html">Lost Items</a></li>
+                <li><a href="found-items.html">Found Items</a></li>
+                <li><a href="report-lost.html">Report Lost</a></li>
+                <li><a href="report-found.html">Report Found</a></li>
+                <li><a href="claims.html">My Claims</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="dashboard">
+            <h2>Dashboard</h2>
+            <p>Welcome to the Lost and Found Management System</p>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <h3>Report Lost Item</h3>
+                    <p>Report a lost item and help others find it</p>
+                    <a href="report-lost.html" class="btn btn-primary">Report Now</a>
+                </div>
+                
+                <div class="card">
+                    <h3>Report Found Item</h3>
+                    <p>Report items you've found</p>
+                    <a href="report-found.html" class="btn btn-primary">Report Now</a>
+                </div>
+                
+                <div class="card">
+                    <h3>Browse Lost Items</h3>
+                    <p>Search for items others have reported as lost</p>
+                    <a href="lost-items.html" class="btn btn-primary">Browse</a>
+                </div>
+                
+                <div class="card">
+                    <h3>Browse Found Items</h3>
+                    <p>Check items found by others</p>
+                    <a href="found-items.html" class="btn btn-primary">Browse</a>
+                </div>
+                
+                <div class="card">
+                    <h3>My Claims</h3>
+                    <p>Manage your claim requests</p>
+                    <a href="claims.html" class="btn btn-primary">View Claims</a>
+                </div>
+                
+                <div class="card">
+                    <h3>My Items</h3>
+                    <p>Manage items you've reported</p>
+                    <a href="my-items.html" class="btn btn-primary">View Items</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/script.js"></script>
+    <script>
+        checkAuth();
+    </script>
+</body>
+</html>
