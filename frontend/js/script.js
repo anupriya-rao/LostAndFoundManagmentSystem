@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Login User
 function loginUser(email, password, role) {
+    if (!email || !password || !role) {
+        showAlert('Please fill in all fields', 'error');
+        return;
+    }
+    
     const loginData = {
         email: email,
         password: password,
@@ -33,31 +38,46 @@ function loginUser(email, password, role) {
         },
         body: JSON.stringify(loginData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('userRole', role);
             localStorage.setItem('userId', data.userId);
             
-            if (role === 'ADMIN') {
-                window.location.href = 'pages/admin-dashboard.html';
-            } else {
-                window.location.href = 'pages/dashboard.html';
-            }
+            showAlert('Login successful!', 'success');
+            
+            setTimeout(() => {
+                if (role === 'ADMIN') {
+                    window.location.href = 'pages/admin-dashboard.html';
+                } else {
+                    window.location.href = 'pages/dashboard.html';
+                }
+            }, 1000);
         } else {
-            showAlert('Login failed: ' + data.message, 'error');
+            showAlert('Login failed: ' + (data.message || 'Invalid credentials'), 'error');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showAlert('An error occurred. Please try again.', 'error');
+        console.error('Login Error:', error);
+        showAlert('Connection error. Is the backend server running on http://localhost:8080?', 'error');
     });
 }
 
 // Get Items
 function getItems(endpoint) {
     const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+        showAlert('Please login first', 'error');
+        window.location.href = '../index.html';
+        return Promise.reject('No authentication token');
+    }
     
     return fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'GET',
@@ -66,16 +86,32 @@ function getItems(endpoint) {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+                throw new Error('Session expired. Please login again.');
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('Failed to fetch data', 'error');
+        showAlert('Failed to fetch data: ' + error.message, 'error');
+        return null;
     });
 }
 
 // Create Item
 function createItem(endpoint, itemData) {
     const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+        showAlert('Please login first', 'error');
+        return Promise.reject('No authentication token');
+    }
     
     return fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
@@ -85,24 +121,36 @@ function createItem(endpoint, itemData) {
         },
         body: JSON.stringify(itemData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             showAlert('Item created successfully', 'success');
             return data;
         } else {
-            showAlert('Failed to create item: ' + data.message, 'error');
+            showAlert('Failed to create item: ' + (data.message || 'Unknown error'), 'error');
+            return null;
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('An error occurred', 'error');
+        showAlert('An error occurred: ' + error.message, 'error');
+        return null;
     });
 }
 
 // Update Item
 function updateItem(endpoint, itemId, itemData) {
     const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+        showAlert('Please login first', 'error');
+        return Promise.reject('No authentication token');
+    }
     
     return fetch(`${API_BASE_URL}${endpoint}/${itemId}`, {
         method: 'PUT',
@@ -112,24 +160,36 @@ function updateItem(endpoint, itemId, itemData) {
         },
         body: JSON.stringify(itemData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             showAlert('Item updated successfully', 'success');
             return data;
         } else {
-            showAlert('Failed to update item: ' + data.message, 'error');
+            showAlert('Failed to update item: ' + (data.message || 'Unknown error'), 'error');
+            return null;
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('An error occurred', 'error');
+        showAlert('An error occurred: ' + error.message, 'error');
+        return null;
     });
 }
 
 // Delete Item
 function deleteItem(endpoint, itemId) {
     const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+        showAlert('Please login first', 'error');
+        return Promise.reject('No authentication token');
+    }
     
     return fetch(`${API_BASE_URL}${endpoint}/${itemId}`, {
         method: 'DELETE',
@@ -138,18 +198,25 @@ function deleteItem(endpoint, itemId) {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             showAlert('Item deleted successfully', 'success');
             return data;
         } else {
-            showAlert('Failed to delete item: ' + data.message, 'error');
+            showAlert('Failed to delete item: ' + (data.message || 'Unknown error'), 'error');
+            return null;
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showAlert('An error occurred', 'error');
+        showAlert('An error occurred: ' + error.message, 'error');
+        return null;
     });
 }
 
@@ -166,13 +233,16 @@ function showAlert(message, type = 'info') {
     const alert = document.createElement('div');
     alert.className = `alert alert-${type}`;
     alert.textContent = message;
+    alert.style.zIndex = '9999';
     
     const container = document.querySelector('.container') || document.body;
     container.insertBefore(alert, container.firstChild);
     
+    console.log(`[${type.toUpperCase()}] ${message}`);
+    
     setTimeout(() => {
         alert.remove();
-    }, 3000);
+    }, 5000);
 }
 
 // Check Authentication
