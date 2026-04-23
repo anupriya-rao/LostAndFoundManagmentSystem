@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: lost-and-found-management-system
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/lost_and_found
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    root: INFO
+    com.lostfound: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+jwt:
+  secret: your-secret-key-change-this-in-production
+  expiration: 86400000
+
+file:
+  upload-dir: ./uploads
+  max-file-size: 10485760
